@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { getCurrentUserWithProfile } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default async function Home() {
   const current = await getCurrentUserWithProfile();
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+    <div className="relative flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="flex flex-col gap-3">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Smart Campus Parking Management System

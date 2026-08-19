@@ -14,9 +14,24 @@ const client = new Client()
 const databases = new Databases(client);
 
 const ZONES = [
-  { name: "Zone A - Computer Science", nearDepartment: "Computer Science Department", description: "Parking closest to the CS building.", slotCount: 8 },
-  { name: "Zone B - Engineering", nearDepartment: "Engineering Department", description: "Parking closest to the Engineering block.", slotCount: 8 },
-  { name: "Zone C - Sports Complex", nearDepartment: "Sports Complex", description: "Parking near the sports complex and main gate.", slotCount: 6 },
+  {
+    name: "Zone A - Computer Science",
+    nearDepartment: "Computer Science Department",
+    description: "Parking closest to the CS building.",
+    slotCount: 8,
+  },
+  {
+    name: "Zone B - Engineering",
+    nearDepartment: "Engineering Department",
+    description: "Parking closest to the Engineering block.",
+    slotCount: 8,
+  },
+  {
+    name: "Zone C - Sports Complex",
+    nearDepartment: "Sports Complex",
+    description: "Parking near the sports complex and main gate.",
+    slotCount: 6,
+  },
 ];
 
 async function findExistingZone(name) {
@@ -32,12 +47,17 @@ async function seed() {
     let zoneDoc = await findExistingZone(zone.name);
 
     if (!zoneDoc) {
-      zoneDoc = await databases.createDocument(DB_ID, COLLECTIONS.ZONES, ID.unique(), {
-        name: zone.name,
-        description: zone.description,
-        nearDepartment: zone.nearDepartment,
-        totalSlots: zone.slotCount,
-      });
+      zoneDoc = await databases.createDocument(
+        DB_ID,
+        COLLECTIONS.ZONES,
+        ID.unique(),
+        {
+          name: zone.name,
+          description: zone.description,
+          nearDepartment: zone.nearDepartment,
+          totalSlots: zone.slotCount,
+        },
+      );
       console.log(`Created zone: ${zone.name}`);
     } else {
       console.log(`Zone already exists, skipping: ${zone.name}`);
@@ -47,11 +67,15 @@ async function seed() {
     for (let i = 1; i <= zone.slotCount; i++) {
       const slotCode = `${prefix}${String(i).padStart(3, "0")}`;
 
-      const existingSlot = await databases.listDocuments(DB_ID, COLLECTIONS.SLOTS, [
-        Query.equal("zoneId", zoneDoc.$id),
-        Query.equal("slotCode", slotCode),
-        Query.limit(1),
-      ]);
+      const existingSlot = await databases.listDocuments(
+        DB_ID,
+        COLLECTIONS.SLOTS,
+        [
+          Query.equal("zoneId", zoneDoc.$id),
+          Query.equal("slotCode", slotCode),
+          Query.limit(1),
+        ],
+      );
 
       if (existingSlot.total > 0) continue;
 

@@ -3,6 +3,34 @@
 import { useEffect, useRef } from "react";
 
 const CONTAINER_ID = "qr-scanner-region";
+const SCAN_CONFIG = { fps: 10, qrbox: 250 };
+
+// Tries the rear/back camera first (what a gate scanner needs), falling back
+// progressively if the device/browser can't honor the strict constraint.
+async function startWithBackCameraPreference(scanner, onDecode) {
+  try {
+    await scanner.start({ facingMode: { exact: "environment" } }, SCAN_CONFIG, onDecode, () => {});
+    return;
+  } catch {
+    // fall through
+  }
+
+  try {
+    await scanner.start({ facingMode: "environment" }, SCAN_CONFIG, onDecode, () => {});
+    return;
+  } catch {
+    // fall through
+  }
+
+  const { Html5Qrcode } = await import("html5-qrcode");
+  const cameras = await Html5Qrcode.getCameras();
+  if (!cameras?.length) throw new Error("No camera found.");
+
+  const backCamera = cameras.find((c) => /back|rear|environment/i.test(c.label));
+  const cameraId = (backCamera || cameras[cameras.length - 1]).id;
+
+  await scanner.start(cameraId, SCAN_CONFIG, onDecode, () => {});
+}
 
 export function QRScanner({ onScan, onError }) {
   const containerRef = useRef(null);
@@ -17,23 +45,9 @@ export function QRScanner({ onScan, onError }) {
       const scanner = new Html5Qrcode(CONTAINER_ID);
       scannerRef.current = scanner;
 
-      Html5Qrcode.getCameras()
-        .then((cameras) => {
-          if (!active || !cameras?.length) {
-            onError?.("No camera found.");
-            return;
-          }
-
-          scanner
-            .start(
-              cameras[0].id,
-              { fps: 10, qrbox: 250 },
-              (decodedText) => onScan?.(decodedText),
-              () => {}
-            )
-            .catch((err) => onError?.(err?.message || "Could not start camera."));
-        })
-        .catch((err) => onError?.(err?.message || "Camera access denied."));
+      startWithBackCameraPreference(scanner, (decodedText) => onScan?.(decodedText)).catch((err) => {
+        if (active) onError?.(err?.message || "Could not start camera.");
+      });
     });
 
     return () => {

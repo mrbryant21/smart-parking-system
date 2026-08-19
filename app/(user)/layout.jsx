@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUserWithProfile } from "@/lib/auth/session";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -43,6 +44,7 @@ export default async function UserLayout({ children }) {
             <span className="text-sm text-muted-foreground">
               {current.profile?.name || current.user.name}
             </span>
+            <ThemeToggle />
             <LogoutButton />
           </div>
         </div>
