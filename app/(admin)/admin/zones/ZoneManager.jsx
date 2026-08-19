@@ -40,6 +40,7 @@ import {
 
 export function ZoneManager({ initialZones, slotCounts }) {
   const router = useRouter();
+  const zones = (initialZones ?? []).filter((z) => z && z.$id);
   const [addOpen, setAddOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
@@ -66,6 +67,12 @@ export function ZoneManager({ initialZones, slotCounts }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    if (!editing?.$id) {
+      setError("No zone selected for editing.");
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
     formData.set("zoneId", editing.$id);
@@ -121,7 +128,7 @@ export function ZoneManager({ initialZones, slotCounts }) {
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{deleteError}</p>
       )}
 
-      {initialZones.length === 0 ? (
+      {zones.length === 0 ? (
         <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
           No zones yet. Add one to get started.
         </p>
@@ -136,7 +143,7 @@ export function ZoneManager({ initialZones, slotCounts }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {initialZones.map((z) => (
+            {zones.map((z) => (
               <TableRow key={z.$id}>
                 <TableCell className="font-medium">{z.name}</TableCell>
                 <TableCell>{z.nearDepartment || "—"}</TableCell>

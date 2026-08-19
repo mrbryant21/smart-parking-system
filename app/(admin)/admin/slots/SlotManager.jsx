@@ -59,8 +59,10 @@ const STATUS_VARIANT = {
   maintenance: "outline",
 };
 
-export function SlotManager({ zones, selectedZoneId, initialSlots }) {
+export function SlotManager({ zones: zonesProp, selectedZoneId, initialSlots: slotsProp }) {
   const router = useRouter();
+  const zones = (zonesProp ?? []).filter((z) => z && z.$id);
+  const initialSlots = (slotsProp ?? []).filter((s) => s && s.$id);
   const [addOpen, setAddOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
@@ -92,6 +94,12 @@ export function SlotManager({ zones, selectedZoneId, initialSlots }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    if (!editing?.$id) {
+      setError("No slot selected for editing.");
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
     formData.set("slotId", editing.$id);

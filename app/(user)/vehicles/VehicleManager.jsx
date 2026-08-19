@@ -53,7 +53,7 @@ const VEHICLE_TYPES = ["car", "motorcycle", "van", "bus", "other"];
 export function VehicleManager({ initialVehicles }) {
   const router = useRouter();
   const [vehicles, setVehicles] = useState(
-    (initialVehicles ?? []).filter((v) => v && v.$id)
+    (initialVehicles ?? []).filter((v) => v && v.$id),
   );
   const [addOpen, setAddOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -86,15 +86,24 @@ export function VehicleManager({ initialVehicles }) {
     setError(null);
     setLoading(true);
 
+    if (!editing?.$id) {
+      setError("No vehicle selected for editing.");
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
     formData.set("vehicleId", editing.$id);
+
     const result = await updateVehicleAction(formData);
 
     setLoading(false);
+
     if (result?.error) {
       setError(result.error);
       return;
     }
+
     setEditing(null);
     refreshFromServer();
   }
@@ -116,12 +125,16 @@ export function VehicleManager({ initialVehicles }) {
             <form onSubmit={handleCreate}>
               <DialogHeader>
                 <DialogTitle>Add vehicle</DialogTitle>
-                <DialogDescription>Register a new vehicle to your account.</DialogDescription>
+                <DialogDescription>
+                  Register a new vehicle to your account.
+                </DialogDescription>
               </DialogHeader>
               <VehicleFields error={error} />
               <DialogFooter className="mt-4">
                 <DialogClose asChild>
-                  <Button type="button" variant="outline">Cancel</Button>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
                 </DialogClose>
                 <Button type="submit" disabled={loading}>
                   {loading ? "Adding..." : "Add vehicle"}
@@ -152,9 +165,13 @@ export function VehicleManager({ initialVehicles }) {
               <TableRow key={v.$id}>
                 <TableCell className="font-medium">{v.plateNumber}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary" className="capitalize">{v.type}</Badge>
+                  <Badge variant="secondary" className="capitalize">
+                    {v.type}
+                  </Badge>
                 </TableCell>
-                <TableCell>{[v.brand, v.model].filter(Boolean).join(" ") || "—"}</TableCell>
+                <TableCell>
+                  {[v.brand, v.model].filter(Boolean).join(" ") || "—"}
+                </TableCell>
                 <TableCell>{v.color || "—"}</TableCell>
                 <TableCell className="flex justify-end gap-2">
                   <Button
@@ -169,13 +186,16 @@ export function VehicleManager({ initialVehicles }) {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm">Delete</Button>
+                      <Button variant="destructive" size="sm">
+                        Delete
+                      </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete vehicle?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will remove {v.plateNumber} from your account. This cannot be undone.
+                          This will remove {v.plateNumber} from your account.
+                          This cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -193,18 +213,25 @@ export function VehicleManager({ initialVehicles }) {
         </Table>
       )}
 
-      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
         <DialogContent>
           {editing && (
             <form onSubmit={handleUpdate}>
               <DialogHeader>
                 <DialogTitle>Edit vehicle</DialogTitle>
-                <DialogDescription>Update your vehicle details.</DialogDescription>
+                <DialogDescription>
+                  Update your vehicle details.
+                </DialogDescription>
               </DialogHeader>
               <VehicleFields vehicle={editing} error={error} />
               <DialogFooter className="mt-4">
                 <DialogClose asChild>
-                  <Button type="button" variant="outline">Cancel</Button>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
                 </DialogClose>
                 <Button type="submit" disabled={loading}>
                   {loading ? "Saving..." : "Save changes"}
@@ -224,11 +251,18 @@ function VehicleFields({ vehicle, error }) {
   return (
     <div className="flex flex-col gap-4 py-2">
       {error && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
       )}
       <div className="flex flex-col gap-2">
         <Label htmlFor="plateNumber">Plate number</Label>
-        <Input id="plateNumber" name="plateNumber" defaultValue={vehicle?.plateNumber} required />
+        <Input
+          id="plateNumber"
+          name="plateNumber"
+          defaultValue={vehicle?.plateNumber}
+          required
+        />
       </div>
       <div className="flex flex-col gap-2">
         <Label>Vehicle type</Label>

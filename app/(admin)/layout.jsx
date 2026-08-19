@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/admin/slots", label: "Slots" },
   { href: "/admin/reservations", label: "Reservations" },
   { href: "/admin/reports", label: "Reports" },
+  { href: "/scan", label: "Scan QR" },
 ];
 
 export default async function AdminLayout({ children }) {

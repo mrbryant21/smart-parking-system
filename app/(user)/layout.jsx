@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/reserve", label: "Reserve" },
   { href: "/reservations", label: "My Reservations" },
+  { href: "/parking-map", label: "Parking Map" },
   { href: "/vehicles", label: "Vehicles" },
   { href: "/profile", label: "Profile" },
 ];
