@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentUserWithProfile } from "@/lib/auth/session";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { MobileNav } from "@/components/nav/MobileNav";
 
 const NAV_LINKS = [
   { href: "/admin", label: "Overview" },
@@ -23,10 +24,15 @@ export default async function AdminLayout({ children }) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header className="border-b bg-background">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-6">
-            <span className="text-sm font-semibold">Admin · Smart Campus Parking</span>
-            <nav className="flex flex-wrap items-center gap-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3 lg:gap-6">
+            <MobileNav
+              title="Admin · Smart Campus Parking"
+              links={NAV_LINKS}
+              triggerClassName="lg:hidden"
+            />
+            <span className="truncate text-sm font-semibold">Admin · Smart Campus Parking</span>
+            <nav className="hidden flex-wrap items-center gap-4 lg:flex">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
@@ -38,8 +44,8 @@ export default async function AdminLayout({ children }) {
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <span className="hidden truncate text-sm text-muted-foreground sm:inline">
               {current.profile?.name || current.user.name}
             </span>
             <ThemeToggle />

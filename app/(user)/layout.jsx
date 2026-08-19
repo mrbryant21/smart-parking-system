@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentUserWithProfile } from "@/lib/auth/session";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { MobileNav } from "@/components/nav/MobileNav";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -17,13 +18,17 @@ export default async function UserLayout({ children }) {
   const current = await getCurrentUserWithProfile();
   if (!current) redirect("/login");
 
+  const isAdmin = current.profile?.role === "admin";
+  const mobileLinks = isAdmin ? [...NAV_LINKS, { href: "/admin", label: "Admin" }] : NAV_LINKS;
+
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header className="border-b bg-background">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-6">
-            <span className="text-sm font-semibold">Smart Campus Parking</span>
-            <nav className="flex items-center gap-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+            <MobileNav title="Smart Campus Parking" links={mobileLinks} />
+            <span className="truncate text-sm font-semibold">Smart Campus Parking</span>
+            <nav className="hidden items-center gap-4 sm:flex">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
@@ -33,15 +38,15 @@ export default async function UserLayout({ children }) {
                   {link.label}
                 </Link>
               ))}
-              {current.profile?.role === "admin" && (
+              {isAdmin && (
                 <Link href="/admin" className="text-sm text-muted-foreground hover:text-foreground">
                   Admin
                 </Link>
               )}
             </nav>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <span className="hidden truncate text-sm text-muted-foreground sm:inline">
               {current.profile?.name || current.user.name}
             </span>
             <ThemeToggle />
