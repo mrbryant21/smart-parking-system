@@ -1,6 +1,6 @@
 import { listZones } from "@/lib/zones/actions";
 import { listAllSlots } from "@/lib/slots/actions";
-import { ZoneGrid } from "@/components/zone-map/ZoneGrid";
+import { ParkingMapClient } from "./ParkingMapClient";
 
 export default async function ParkingMapPage() {
   const [zones, slots] = await Promise.all([listZones(), listAllSlots()]);
@@ -18,23 +18,13 @@ export default async function ParkingMapPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-4 text-xs">
-        <LegendItem color="bg-emerald-400" label="Available" />
-        <LegendItem color="bg-amber-400" label="Reserved" />
-        <LegendItem color="bg-red-400" label="Occupied" />
+        <LegendItem color="bg-emerald-500" label="Available" />
+        <LegendItem color="bg-amber-500" label="Reserved" />
+        <LegendItem color="bg-red-500" label="Occupied" />
         <LegendItem color="bg-muted-foreground/40" label="Maintenance" />
       </div>
 
-      {zones.length === 0 ? (
-        <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No zones configured yet.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {zones.map((zone) => (
-            <ZoneGrid key={zone.$id} zone={zone} slots={slotsByZone[zone.$id] || []} />
-          ))}
-        </div>
-      )}
+      <ParkingMapClient zones={zones} slotsByZone={slotsByZone} />
     </div>
   );
 }
