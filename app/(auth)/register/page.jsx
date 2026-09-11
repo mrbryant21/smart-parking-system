@@ -6,6 +6,7 @@ import Link from "next/link";
 import { registerAction } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/forms/PasswordInput";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -83,7 +84,7 @@ export default function RegisterPage() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" />
+            <PasswordInput id="password" name="password" required minLength={8} autoComplete="new-password" />
           </div>
           <div className="flex flex-col gap-2">
             <Label>Role</Label>

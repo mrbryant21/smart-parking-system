@@ -6,6 +6,7 @@ import Link from "next/link";
 import { loginAction } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/forms/PasswordInput";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -64,7 +65,7 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <Input id="password" name="password" type="password" required autoComplete="current-password" />
+            <PasswordInput id="password" name="password" required autoComplete="current-password" />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
